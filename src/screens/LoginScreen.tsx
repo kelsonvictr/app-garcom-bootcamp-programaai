@@ -5,6 +5,8 @@ import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../navigation/types'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../firebase/config'
 
 const LoginScreen = () => {
 
@@ -12,6 +14,14 @@ const LoginScreen = () => {
   const [senha, setSenha] = useState("")
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Login'>>()
+
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, senha)
+    } catch {
+      alert('Erro ao fazer login')
+    }
+  }
 
 
   return (
@@ -41,7 +51,7 @@ const LoginScreen = () => {
         style={{ width: '100%', marginBottom: 10 }}
       />
 
-      <Button mode="contained" style={{ width: '100%' }}>
+      <Button mode="contained" style={{ width: '100%' }} onPress={handleLogin}>
         Entrar
       </Button>
 
