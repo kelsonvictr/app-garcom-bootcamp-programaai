@@ -17,7 +17,7 @@ const CadastroScreen = () => {
     const [senha, setSenha] = useState("")
     const [confirmarSenha, setConfirmarSenha] = useState("")
 
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Cadastro'>>()
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
     const handleCadastro = async () => {
         if (senha !== confirmarSenha) {
@@ -26,7 +26,11 @@ const CadastroScreen = () => {
         }
 
         try {
+            console.log("cadastrando...")
+            console.log(email, senha, auth)
             const usuarioCriado = await createUserWithEmailAndPassword(auth, email, senha)
+
+            console.log("cadastrado?...")
 
             await setDoc(doc(db, "users", usuarioCriado.user.uid), {
                 email,
@@ -36,7 +40,7 @@ const CadastroScreen = () => {
 
             alert("Cadastro realizado com sucesso! Por favor, faça login.")
 
-            await  firebaseSignOut(auth)
+            await firebaseSignOut(auth)
         } catch {
             alert("Erro ao cadastar. Verifique os dados.")
         }

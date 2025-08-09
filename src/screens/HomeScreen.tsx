@@ -3,7 +3,7 @@ import React from 'react'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../navigation/types'
 import { useNavigation } from '@react-navigation/native'
-import { Text } from 'react-native-paper'
+import { Button, Text } from 'react-native-paper'
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
 
@@ -22,6 +22,13 @@ const HomeScreen = () => {
               />
 
               <Text variant="titleLarge">Meus Pedidos</Text>
+
+              <Button
+                mode="outlined"
+                style={{ width: '100%', marginTop: 10 }}
+              >
+                Novo Pedido
+              </Button>
 
 
 
