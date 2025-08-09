@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../navigation/types'
 import { useNavigation } from '@react-navigation/native'
 import { Button, Text } from 'react-native-paper'
+import { auth } from '../firebase/config'
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
 
@@ -26,8 +27,17 @@ const HomeScreen = () => {
               <Button
                 mode="outlined"
                 style={{ width: '100%', marginTop: 10 }}
+                onPress={() => navigation.navigate('NovoPedido', {})}
               >
                 Novo Pedido
+              </Button>
+
+              <Button
+                mode="outlined"
+                onPress={() => auth.signOut()}
+                style={{ width: '100%', marginTop: 10 }}
+              >
+                Sair
               </Button>
 
 

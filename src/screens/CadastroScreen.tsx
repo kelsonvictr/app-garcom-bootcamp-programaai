@@ -41,10 +41,14 @@ const CadastroScreen = () => {
             alert("Cadastro realizado com sucesso! Por favor, faça login.")
 
             await firebaseSignOut(auth)
-        } catch {
-            alert("Erro ao cadastar. Verifique os dados.")
+        } catch (error: any) {
+          console.log("Erro ao cadastrar:", error)
+          console.log("Código do erro:", error.code)
+          console.log("Mensagem do erro:", error.message)
+          alert(`Erro: ${error.code}`)
         }
-    }
+      }
+    
 
   return (
     <View style={{ padding: 20, marginTop: 50 }} >
