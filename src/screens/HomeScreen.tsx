@@ -5,6 +5,7 @@ import { RootStackParamList } from '../navigation/types'
 import { useNavigation } from '@react-navigation/native'
 import { Button, Text } from 'react-native-paper'
 import { auth } from '../firebase/config'
+import PedidoList from '../components/PedidoList'
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
 
@@ -39,6 +40,8 @@ const HomeScreen = () => {
               >
                 Sair
               </Button>
+
+              <PedidoList />
 
 
 
