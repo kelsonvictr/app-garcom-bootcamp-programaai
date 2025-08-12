@@ -5,4 +5,5 @@ export type RootStackParamList = {
     Cadastro: undefined
     Home: undefined
     NovoPedido: { pedido?: Pedido }
+    Cozinha: undefined
 } 

@@ -5,7 +5,7 @@ import { RootStackParamList } from '../navigation/types'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Button, Text, TextInput } from 'react-native-paper'
 import { AuthContext } from '../contexts/AuthContext'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase/config'
 
 type FormRouteProp = RouteProp<RootStackParamList, 'NovoPedido'>
@@ -13,11 +13,14 @@ type FormNavigationProp = NativeStackNavigationProp<RootStackParamList, 'NovoPed
 
 const PedidoForm = () => {
 
-    const [mesa, setMesa] = useState("")
-    const [itens, setItens] = useState("")
-    const [observacoes, setObservacoes] = useState("")
-
     const route = useRoute<FormRouteProp>()
+    const { pedido } = route.params || {} 
+
+    const [mesa, setMesa] = useState(pedido?.mesa ?? "")
+    const [itens, setItens] = useState(pedido?.itens ?? "")
+    const [observacoes, setObservacoes] = useState(pedido?.observacoes ?? "")
+
+    
     const navigation = useNavigation<FormNavigationProp>()
 
     const { user } = useContext(AuthContext)
@@ -30,7 +33,17 @@ const PedidoForm = () => {
         }
 
         try {
-            await addDoc(collection(db, 'pedidos'), {
+            if (pedido?.id) {
+              //Se existe pedido (id), significa edição!
+              await updateDoc(doc(db, 'pedidos', pedido.id), {
+                mesa,
+                itens,
+                observacoes
+              })
+              Alert.alert('Sucesso', 'Pedido atualizado com sucesso')
+            } else {
+              //Se não, é porque quer criar um novo pedido!
+              await addDoc(collection(db, 'pedidos'), {
                 mesa,
                 itens,
                 observacoes,
@@ -39,6 +52,8 @@ const PedidoForm = () => {
                 status: 'solicitado'
             })
             Alert.alert('Sucesso', 'Pedido solicitado com sucesso!')
+            }          
+            
             navigation.goBack()
         } catch (error: any) {
           console.log("Erro ao cadastrar:", error)
@@ -50,7 +65,7 @@ const PedidoForm = () => {
 
   return (
     <View style={{ padding: 20 }}>
-      <Text variant="titleLarge">Novo Pedido</Text>
+      <Text variant="titleLarge">{pedido?.id ? 'Editar Pedido' : 'Novo Pedido'}</Text>
       <TextInput
         label="Mesa"
         value={mesa}
@@ -73,7 +88,7 @@ const PedidoForm = () => {
       />
 
       <Button mode="contained" onPress={handleEnviar}>
-        Solicitar Pedido
+        {pedido?.id ? 'Salvar Alterações' : 'Solicitar Pedido'}
       </Button>
     </View>
   )

@@ -79,6 +79,9 @@ const PedidoList = () => {
         {item.observacoes ? <Text>Obs: {item.observacoes}</Text> : null}
       </Card.Content>
       <Card.Actions>
+        <PaperButton onPress={() => navigation.navigate('NovoPedido', { pedido: item })}>
+          Editar
+        </PaperButton>
         <PaperButton onPress={() => handleDelete(item.id)}>
           Excluir
         </PaperButton>
