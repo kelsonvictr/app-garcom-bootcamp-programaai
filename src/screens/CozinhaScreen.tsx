@@ -1,7 +1,7 @@
-import { FlatList, StyleSheet, View } from 'react-native'
+import { Alert, FlatList, StyleSheet, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Pedido } from '../types/Pedido'
-import { collection, onSnapshot } from 'firebase/firestore'
+import { collection, doc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db, auth } from '../firebase/config'
 import { Button, Card, Chip, Text } from 'react-native-paper'
 
@@ -29,6 +29,41 @@ const CozinhaScreen = () => {
     return () => unsub()
   }, [])
 
+
+  const changeStatus = (p: Pedido) => {
+    if (!p.id) return
+
+    let next: Pedido['status']
+    let label: string
+
+    if (p.status === 'solicitado') {
+      next = 'preparando'
+      label = 'Iniciar Preparo'
+    } else if (p.status === 'preparando') {
+      next = 'preparado'
+      label = 'Marcar Preparado'
+     } else {
+        return
+     }
+
+     Alert.alert(label, `Confirma "${label.toLowerCase()}"?`, [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: label.includes('Iniciar') ? 'Iniciar' : 'Preparado' , 
+        onPress:  async () => {
+          try {
+            await updateDoc(
+              doc(db, 'pedidos', p.id!),
+              { status: next }
+            )
+          } catch {
+            Alert.alert('Erro', 'Não foi possível atualizar')
+          }
+        }
+       }
+     ])
+
+  }
+
   const renderItem = ( { item }: { item: Pedido }) => (
     <Card
       style={{
@@ -45,11 +80,12 @@ const CozinhaScreen = () => {
           )}
         />
         <Card.Content>
-          { item.observacoes ? <Text> {item.observacoes} </Text> : null }
+          <Text>{item.itens}</Text>
+          { item.observacoes ? <Text>Observações: {item.observacoes} </Text> : null }
         </Card.Content>
         <Card.Actions>
           {(item.status === 'solicitado' || item.status === 'preparando' ) && (
-            <Button>
+            <Button onPress={() => changeStatus(item)}>
               { item.status === 'solicitado' ? 'Iniciar Preparo' : 'Marcar Preparado' }
             </Button>
           )}
