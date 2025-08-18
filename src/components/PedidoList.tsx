@@ -5,7 +5,7 @@ import { AuthContext } from '../contexts/AuthContext'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../navigation/types'
-import { collection, deleteDoc, doc, onSnapshot, query, where } from 'firebase/firestore'
+import { collection, deleteDoc, doc, onSnapshot, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { Card, Chip, Button as PaperButton } from 'react-native-paper'
 
@@ -58,6 +58,29 @@ const PedidoList = () => {
 
   }
 
+    const marcarEntregue = (p: Pedido) => {
+    if (!p.id) return
+    Alert.alert('Entregar Pedido', 'Confirma entrega?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Entregue',
+        onPress: async () => {
+          try {
+            await updateDoc(
+              doc(db, 'pedidos', p.id!),
+              {
+                status: 'entregue',
+                entregueEm: serverTimestamp()
+              }
+            )
+          } catch {
+            Alert.alert('Erro', 'Não foi possível atualizar')
+          }
+        }
+      }
+    ])
+  }
+
   const renderItem = ({ item }: { item: Pedido }) => (
     <Card
       style={{
@@ -86,7 +109,7 @@ const PedidoList = () => {
           Excluir
         </PaperButton>
         {item.status === 'preparado' && (
-          <PaperButton>
+          <PaperButton onPress={() => marcarEntregue(item)}>
             Marcar Entregue
           </PaperButton>
         )}
